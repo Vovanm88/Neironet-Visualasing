@@ -7,6 +7,8 @@
 
 #include <string>
 
+//#include <format>
+
 #include <sstream>
 
 #include "MyNetwork.h"
@@ -25,9 +27,14 @@
 */
 sf::Color Colorise(double i) {
 	int r, g, b;
+	/*
 	b = (int)(255 * std::min(1.0, std::max(0.0, i)));
 	r = (int)(255 * (0-std::min(0.0, std::max(-1.0, i))));
 	g = (int)(std::max(255 - (r + b), 0));
+	*/
+	r = (1 - std::max(i, 0.0)) * 255;
+	g = (1 - std::fabs(i)) * 255;
+	b = (1 - std::max(-i, 0.0)) * 255;
 	return sf::Color(r, g, b);
 }
 
@@ -61,7 +68,7 @@ std::vector < Sinaps > getConnections(MyNetwork& nt) {
 		for (size_t j = 0; j < ntwrk[i].size(); j++) {
 			for (size_t k = 0; k < ntwrk[i][j].W.size(); k++) {
 				Sinaps tmp;
-				tmp.w = static_cast<float>(5.0 / (1 + std::exp(5 - 3 * (std::abs(ntwrk[i][j].W[k])))) + 1);
+				tmp.w = static_cast<float>(4.0 / (1 + std::exp(3 - (std::abs(ntwrk[i][j].W[k]))))+0.6);
 				if (ntwrk[i][j].W[k] < 0) {
 					tmp.col =sf::Color(255, 0, 0);
 				}else {
@@ -232,20 +239,37 @@ int main(){
 	MainWindowRenderrer window = InitWindow();
 	MainLayout layout(window);
 
-	std::vector <unsigned int> LS = {4, 10, 6, 1};
+	//std::vector <unsigned int> LS = {4, 12, 5, 1};
+	std::vector <unsigned int> LS = {1, 1, 1};
+
+	
 	MyNetwork net(LS.size() - 1, LS, "Logistic", 1);
 	NetworkTeacher nt;
+//	net.loadData("neironetData.ndat");
+/*
 	nt.addExample(std::vector<double>{1, 1, 1, 0}, std::vector<double>{0});
-
+	nt.addExample(std::vector<double>{1, 1, 0, 0}, std::vector<double>{0});
+	nt.addExample(std::vector<double>{1, 0, 1, 1}, std::vector<double>{1});
+	nt.addExample(std::vector<double>{1, 0, 0, 1}, std::vector<double>{1});
+	nt.addExample(std::vector<double>{1, 0, 0, 0}, std::vector<double>{1});
+	nt.addExample(std::vector<double>{0, 1, 1, 0}, std::vector<double>{0});
+	nt.addExample(std::vector<double>{0, 1, 0, 1}, std::vector<double>{0});
+	nt.addExample(std::vector<double>{0, 1, 0, 0}, std::vector<double>{0});
+	nt.addExample(std::vector<double>{0, 0, 0, 0}, std::vector<double>{1});
+	*/
+	nt.addExample(std::vector<double>{1}, std::vector<double>{1});
+	nt.addExample(std::vector<double>{0}, std::vector<double>{0});
 	//nt.startLearn(net, 0.6);
 	double TE, E, learnSpeed=0.0001;
 	while(window.isOpen()){
 		sf::Event ev;
 		while(window.pollEvent(ev)){
 			if(ev.type ==  sf::Event::Closed){
+				net.saveData("neironetData.ndat");
 				window.close();
 			}
 			if (ev.key.code == sf::Keyboard::Escape){
+				net.saveData("neironetData.ndat");
 				window.close();
 			}
 		}
@@ -310,14 +334,6 @@ int main(){
 			tmp.setPosition(f1);
 			tmp.setRotation(a);
 			window.draw(tmp);
-			/*
-			sf::RectangleShape tmp2(sf::Vector2f(l, t));
-			tmp2.setFillColor(el.col);
-			f2.x = f2.x + 20.f;
-			tmp2.setPosition(f2);
-			tmp2.setRotation(a);
-			w1.draw(tmp2);
-			*/
 		}
 		window.display();
 	}
