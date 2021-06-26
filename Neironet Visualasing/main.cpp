@@ -152,7 +152,6 @@ struct MainWindowRenderrerSettings
 	unsigned int height = 600;
 	std::string title = "Neironet";
 	sf::ContextSettings contextSettings;
-	std::string fontName = "Arial";
 	sf::Color clearColor = sf::Color(30, 30, 31);
 };
 
