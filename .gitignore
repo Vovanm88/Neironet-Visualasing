@@ -3,6 +3,7 @@
 *.out
 *.kate-swp
 *.h.gch
+*.ndat
 
 ## VS ignore
 ## Ignore Visual Studio temporary files, build results, and
