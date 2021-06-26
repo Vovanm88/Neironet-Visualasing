@@ -61,8 +61,8 @@ void NetworkTeacher::startLearnVis(MyNetwork& net, std::vector<double>& in, doub
 	res = net.Activate(DATASET[r].first);
 	net.LearnNetwork(DATASET[r].second);
 	E += oError(res[0] - DATASET[r].second[0]);
-	std::cout << "Input {" << DATASET[r].first[0] << ", " << DATASET[r].first[1] << "} " << '\n';
-	std::cout << "Output = " << res[0] << ", Answer = " << DATASET[r].second[0] << ", Error = " << oError(res[0] - DATASET[r].second[0]) << '\n';
+//	std::cout << "Input {" << DATASET[r].first[0] << ", " << DATASET[r].first[1] << "} " << '\n';
+//	std::cout << "Output = " << res[0] << ", Answer = " << DATASET[r].second[0] << ", Error = " << oError(res[0] - DATASET[r].second[0]) << '\n';
 	if (learnSpeed < 0.5) {
 		learnSpeed += 0.00001;
 	}

@@ -1,5 +1,6 @@
 #include "Neiron.h"
 #include <iostream>
+#include <algorithm>
 Neiron::Neiron(int size, std::string arc, std::mt19937& mrsnRnd) {
 	//std::srand(static_cast<unsigned int>(time(0)));
 	/*for (int i = 0; i < 100; i++) {
