@@ -1,16 +1,5 @@
 #include "main_funcs.h"
 
-/*void xorAct() {
-	std::vector <unsigned int> layers = {2, 8, 6, 3, 1};
-	MyNetwork net(layers.size() - 1, layers, "Logistic", 1);
-	NetworkTeacher teacher;
-	teacher.addExample(std::vector<double>{1, 1}, std::vector<double>{0});
-	teacher.addExample(std::vector<double>{0, 1}, std::vector<double>{1});
-	teacher.addExample(std::vector<double>{1, 0}, std::vector<double>{1});
-	teacher.addExample(std::vector<double>{0, 0}, std::vector<double>{0});
-	teacher.startLearn(net, 0.9);
-}
-*/
 sf::Color Colorise(double i) {
 	int r, g, b;
 	/*

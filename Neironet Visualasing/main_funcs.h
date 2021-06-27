@@ -16,8 +16,6 @@
 #include "MyNetwork.h"
 #include "NetworkTeacher.h"
 
-//void xorAct();
-
 sf::Color Colorise(double i);
 
 std::vector <std::vector <sf::Color> > getColors(MyNetwork &nt, std::vector <double> input);

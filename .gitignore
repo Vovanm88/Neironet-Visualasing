@@ -370,3 +370,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# dll files
+*.dll
+
+#neironet files
+*.ndat
