@@ -14,17 +14,6 @@
 #include "MyNetwork.h"
 #include "NetworkTeacher.h"
 
-/*void xorAct() {
-	std::vector <unsigned int> LS = {2, 8, 6, 3, 1};
-	MyNetwork net(LS.size() - 1, LS, "Logistic", 1);
-	NetworkTeacher nt;
-	nt.addExample(std::vector<double>{1, 1}, std::vector<double>{0});
-	nt.addExample(std::vector<double>{0, 1}, std::vector<double>{1});
-	nt.addExample(std::vector<double>{1, 0}, std::vector<double>{1});
-	nt.addExample(std::vector<double>{0, 0}, std::vector<double>{0});
-	nt.startLearn(net, 0.9);
-}
-*/
 sf::Color Colorise(double i) {
 	int r, g, b;
 	/*
@@ -86,16 +75,167 @@ double lenV2f(sf::Vector2f a, sf::Vector2f b) {
 	return std::sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 
+#include <boost/algorithm/string.hpp>
+#include <regex>
+#include <filesystem>
+namespace fs = std::filesystem;
 
-int main(){
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 8;
-	sf::Font font;
-	if (!font.loadFromFile("arial.ttf")){
-		cout << "ERROR! FONT CAN'T BE LOADED!";
-		return 0;
+std::vector<fs::directory_entry> GetAllFiles(std::string dirName)
+{
+	if (!fs::exists(dirName) || !fs::is_directory(dirName))
+		return {};
+	
+	std::vector<fs::directory_entry> files;
+
+	for (fs::directory_entry entry : fs::directory_iterator(dirName))
+	{
+		if (entry.is_directory())
+		{
+			auto new_files = GetAllFiles(entry.path());
+			files.insert(files.end(), new_files.begin(), new_files.end());
+		}
+		else
+		{
+			files.push_back(entry);
+		}
+	}
+	return files;
+}
+
+std::string GetFontPath(std::string fontName)
+{
+	#ifdef __linux__
+	std::string fontPaths[] = {"/usr/share/fonts",
+							   "/usr/local/share/fonts",
+							   "~/.fonts"};
+	#elif _WIN32
+	std::string fontPaths[] = {"%WINDIR%/Fonts"};
+	#else
+	throw "Unsupported system";
+	#endif
+
+	boost::to_lower(fontName);
+	
+	std::regex font_file_regex(fontName + "\\.(ttf|otf|cff|aat|sil|psf|)");
+
+	for (std::string path : fontPaths)
+	{
+		for (auto entry : GetAllFiles(path))
+		{
+			auto name = entry.path().filename().string();
+			boost::to_lower(name);
+			if (std::regex_match(name, font_file_regex))
+			{
+				return entry.path();
+			}
+		}
 	}
 
+	return "";
+}
+
+struct MainWindowRenderrerSettings
+{
+	public:
+	unsigned int width = 800;
+	unsigned int height = 600;
+	std::string title = "Neironet";
+	sf::ContextSettings contextSettings;
+	sf::Color clearColor = sf::Color(30, 30, 31);
+};
+
+class MainWindowRenderrer
+{	
+	public:
+	MainWindowRenderrer(MainWindowRenderrerSettings settings)
+	: window(sf::VideoMode(settings.width, settings.height),
+		settings.title, sf::Style::Default, settings.contextSettings)
+	{
+		clearColor = settings.clearColor;
+	}
+
+	sf::Font font;
+
+	bool isOpen() { return window.isOpen(); }
+	bool pollEvent(sf::Event &ev) { return window.pollEvent(ev); }
+	void close() { window.close(); }
+	void clear() { window.clear(clearColor); }
+	void draw(sf::Drawable &obj) { window.draw(obj); }
+	void display() { window.display(); }
+
+	private:
+	sf::RenderWindow window;
+	sf::Color clearColor;
+};
+
+MainWindowRenderrer InitWindow()
+{
+	MainWindowRenderrerSettings settings;
+	settings.contextSettings.antialiasingLevel = 8;
+	return MainWindowRenderrer(settings);
+}
+
+class MainLayout
+{
+	public:
+	MainLayout(MainWindowRenderrer &window)
+	{
+		_window = &window;
+		if (!_font.loadFromFile(GetFontPath(_fontName))){
+			cout << "Warning: font not found. loading random font";
+			assert(_font.loadFromFile(GetFontPath(".*")));
+		}
+		_totalErrorText.setFont(_font);
+		_totalErrorText.setCharacterSize(24); // in pixels, not points!
+		_totalErrorText.setFillColor(sf::Color::White);
+
+		_learningSpeedText.setFont(_font);
+		_learningSpeedText.setCharacterSize(16); // in pixels, not points!
+		_learningSpeedText.setFillColor(sf::Color::White);
+		_learningSpeedText.setPosition(sf::Vector2f(500.f, 30.f));
+	}
+
+
+	void SetTotalError(double val)
+	{
+		sprintf(buffer, "Total Error = %f", val);
+		_totalErrorText.setString(buffer);
+	}
+
+	void SetLearningSpeed(double val)
+	{
+		sprintf(buffer, "Learning speed %f", val);
+		_learningSpeedText.setString(buffer);
+	}
+
+	void Draw()
+	{
+		_window->draw(_totalErrorText);
+		_window->draw(_learningSpeedText);
+	}
+
+	private:
+	const std::string _fontName = "Arial";
+	sf::Font _font;
+	MainWindowRenderrer *_window;
+	sf::Text _totalErrorText;
+	sf::Text _learningSpeedText;
+
+	char buffer[32];
+};
+
+int main(){
+	MainWindowRenderrer window = InitWindow();
+	MainLayout layout(window);
+
+	//std::vector <unsigned int> LS = {4, 12, 5, 1};
+	std::vector <unsigned int> LS = {1, 1, 1};
+
+	
+	MyNetwork net(LS.size() - 1, LS, "Logistic", 1);
+	NetworkTeacher nt;
+//	net.loadData("neironetData.ndat");
+/*
 //	text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 	sf::RenderWindow w1(sf::VideoMode(800, 600), "Neironet", sf::Style::Default, settings);
 	//std::vector <unsigned int> LS = {4, 12, 5, 1};
@@ -116,50 +256,32 @@ int main(){
 	nt.addExample(std::vector<double>{0, 1, 0, 0}, std::vector<double>{0});
 	nt.addExample(std::vector<double>{0, 0, 0, 0}, std::vector<double>{1});
 	*/
+
 	nt.addExample(std::vector<double>{1}, std::vector<double>{1});
 	nt.addExample(std::vector<double>{0}, std::vector<double>{0});
 	//nt.startLearn(net, 0.6);
 	double TE, E, learnSpeed=0.0001;
-	while(w1.isOpen()){
+	while(window.isOpen()){
 		sf::Event ev;
-		while(w1.pollEvent(ev)){
+		while(window.pollEvent(ev)){
 			if(ev.type ==  sf::Event::Closed){
 				net.saveData("neironetData.ndat");
-				w1.close();
+				window.close();
 			}
 			if (ev.key.code == sf::Keyboard::Escape){
 				net.saveData("neironetData.ndat");
-				w1.close();
+				window.close();
+
 			}
 		}
 		std::vector <double> in;
 		nt.startLearnVis(net, in, TE, E, learnSpeed);
 
-		sf::Text text;
-		std::stringstream sstr;
-		std::string s;
-		sstr << "Total Error = " << TE;
-		s = sstr.str();
-		text.setFont(font); // font is a sf::Font
-		text.setString(s);
-		text.setCharacterSize(24); // in pixels, not points!
-		text.setFillColor(sf::Color::White);
+		window.clear();
 
-		w1.clear(sf::Color(30, 30, 31));
-		w1.draw(text);
-
-
-		sf::Text text2;
-		std::stringstream sst2;
-		sst2 << "Learning speed " << learnSpeed;
-		
-		s = sst2.str();
-		text2.setFont(font); // font is a sf::Font
-		text2.setString(s);
-		text2.setCharacterSize(16); // in pixels, not points!
-		text2.setFillColor(sf::Color::White);
-		text2.setPosition(sf::Vector2f(500.f, 30.f));
-		w1.draw(text2);
+		layout.SetTotalError(TE);
+		layout.SetLearningSpeed(learnSpeed);
+		layout.Draw();
 
 		std::vector <std::vector <sf::Color> > Neirons = getColors(net, in);
 		double x = 10.0, y=100.0;
@@ -185,7 +307,7 @@ int main(){
 			x += xstep;
 		}
 		for (auto el : layer) {
-			w1.draw(el);
+			window.draw(el);
 		}
 		std::vector < Sinaps > snp = getConnections(net);
 		for (const auto &el : snp) {
@@ -212,8 +334,8 @@ int main(){
 			f1.y = f1.y-t/2;
 			tmp.setPosition(f1);
 			tmp.setRotation(a);
-			w1.draw(tmp);
+			window.draw(tmp);
 		}
-		w1.display();
+		window.display();
 	}
 }

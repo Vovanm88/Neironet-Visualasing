@@ -311,7 +311,7 @@ public:
 		int r = getRandomNumber(0, DATASET.size() - 1);
 		res = net.Activate(DATASET[r].first);
 		net.LearnNetwork(DATASET[r].second);
-		E += oError(res[j] - DATASET[r].second[j]);
+		//E += oError(res[j] - DATASET[r].second[j]);
 		if (learnSpeed < 0.5) {
 			learnSpeed += 0.01;
 		}
