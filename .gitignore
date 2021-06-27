@@ -4,6 +4,7 @@
 *.kate-swp
 *.h.gch
 *.ndat
+.vscode
 
 ## VS ignore
 ## Ignore Visual Studio temporary files, build results, and

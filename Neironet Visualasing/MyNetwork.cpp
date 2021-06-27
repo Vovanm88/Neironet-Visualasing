@@ -80,12 +80,12 @@ std::vector <std::vector <Neiron> > MyNetwork::getNetworkData() {
 	return network;
 }
 int MyNetwork::saveData(std::string dataPath) {
-	/* 
+	
 	// The save file had this content:
 	// first line contain number of layers - nL and type of activation function
 	// second line coitain (nL+1) numbers that means number of neirons of each layers
 	// next lines contains weights of each neiron, one line per neiron
-	*/
+	
 	std::ofstream fout(dataPath, std::ios_base::trunc);
 	if (!fout.is_open()) {
 		return 1;
