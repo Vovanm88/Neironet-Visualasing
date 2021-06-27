@@ -1,10 +1,22 @@
 ## Custom ignore
 
+# g++ default output
 *.out
+
+# Kate temp files
 *.kate-swp
+
+# g++ precompiled headers
 *.h.gch
-*.ndat
+
+# VS Code dir
 .vscode
+
+# dll files
+*.dll
+
+#neironet files
+*.ndat
 
 ## VS ignore
 ## Ignore Visual Studio temporary files, build results, and
@@ -370,9 +382,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# dll files
-*.dll
-
-#neironet files
-*.ndat
