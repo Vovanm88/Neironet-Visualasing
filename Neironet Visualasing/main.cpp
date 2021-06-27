@@ -256,6 +256,7 @@ int main(){
 	nt.addExample(std::vector<double>{0, 1, 0, 0}, std::vector<double>{0});
 	nt.addExample(std::vector<double>{0, 0, 0, 0}, std::vector<double>{1});
 	*/
+	//
 	nt.addExample(std::vector<double>{1}, std::vector<double>{1});
 	nt.addExample(std::vector<double>{0}, std::vector<double>{0});
 	//nt.startLearn(net, 0.6);
