@@ -14,17 +14,6 @@
 #include "MyNetwork.h"
 #include "NetworkTeacher.h"
 
-/*void xorAct() {
-	std::vector <unsigned int> LS = {2, 8, 6, 3, 1};
-	MyNetwork net(LS.size() - 1, LS, "Logistic", 1);
-	NetworkTeacher nt;
-	nt.addExample(std::vector<double>{1, 1}, std::vector<double>{0});
-	nt.addExample(std::vector<double>{0, 1}, std::vector<double>{1});
-	nt.addExample(std::vector<double>{1, 0}, std::vector<double>{1});
-	nt.addExample(std::vector<double>{0, 0}, std::vector<double>{0});
-	nt.startLearn(net, 0.9);
-}
-*/
 sf::Color Colorise(double i) {
 	int r, g, b;
 	/*
@@ -206,6 +195,7 @@ class MainLayout
 		_learningSpeedText.setPosition(sf::Vector2f(500.f, 30.f));
 	}
 
+
 	void SetTotalError(double val)
 	{
 		sprintf(buffer, "Total Error = %f", val);
@@ -246,6 +236,16 @@ int main(){
 	NetworkTeacher nt;
 //	net.loadData("neironetData.ndat");
 /*
+//	text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+	sf::RenderWindow w1(sf::VideoMode(800, 600), "Neironet", sf::Style::Default, settings);
+	//std::vector <unsigned int> LS = {4, 12, 5, 1};
+	std::vector <unsigned int> LS = {1, 1, 1};
+
+
+	MyNetwork net(LS.size() - 1, LS, "Logistic", 1);
+	NetworkTeacher nt;
+//	net.loadData("neironetData.ndat");
+/*	
 	nt.addExample(std::vector<double>{1, 1, 1, 0}, std::vector<double>{0});
 	nt.addExample(std::vector<double>{1, 1, 0, 0}, std::vector<double>{0});
 	nt.addExample(std::vector<double>{1, 0, 1, 1}, std::vector<double>{1});
@@ -256,7 +256,7 @@ int main(){
 	nt.addExample(std::vector<double>{0, 1, 0, 0}, std::vector<double>{0});
 	nt.addExample(std::vector<double>{0, 0, 0, 0}, std::vector<double>{1});
 	*/
-	//
+
 	nt.addExample(std::vector<double>{1}, std::vector<double>{1});
 	nt.addExample(std::vector<double>{0}, std::vector<double>{0});
 	//nt.startLearn(net, 0.6);
@@ -271,6 +271,7 @@ int main(){
 			if (ev.key.code == sf::Keyboard::Escape){
 				net.saveData("neironetData.ndat");
 				window.close();
+
 			}
 		}
 		std::vector <double> in;
