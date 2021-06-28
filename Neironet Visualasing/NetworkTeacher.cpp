@@ -38,7 +38,7 @@ void NetworkTeacher::startLearn(double stop)
 	}
 }
 
-void NetworkTeacher::doLearnCycle(std::vector<double> &in, double &TE, double &E)
+void NetworkTeacher::doLearnCycle(std::vector<double> &in, double &E)
 {
 	//double d1 = 10e9, d2 = 10e9; //unused
 	net->setLearningSpeed(learnSpeed);
@@ -52,7 +52,7 @@ void NetworkTeacher::doLearnCycle(std::vector<double> &in, double &TE, double &E
 	//	std::cout << "Input {" << dataset[r].data[0] << ", " << dataset[r].data[1] << "} " << '\n';
 	//	std::cout << "Output = " << res[0] << ", Answer = " << dataset[r].answer[0] << ", Error = " << oError(res[0] - dataset[r].answer[0]) << '\n';
 	raiseLearnSpeed();
-	TE = calcTotalError();
+	lastTotalError = calcTotalError();
 }
 
 void NetworkTeacher::raiseLearnSpeed()
@@ -106,3 +106,4 @@ void NetworkTeacher::setLearnSpeed(double value) { learnSpeed = value; }
 double NetworkTeacher::getLearnSpeed() { return learnSpeed; }
 void NetworkTeacher::assign(MyNetwork &network) { net = &network; }
 void NetworkTeacher::setDataset(Dataset dataset_) { dataset = dataset_; }
+double NetworkTeacher::getLastCycleTotalError() { return lastTotalError; }

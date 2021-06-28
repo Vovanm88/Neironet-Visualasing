@@ -32,17 +32,16 @@ void Application::init()
 
 void Application::start()
 {
-    double totalError;
     double E; // ???
     while (window.isOpen())
     {
         window.checkInput();
         std::vector<double> in;
-        teacher.doLearnCycle(in, totalError, E);
+        teacher.doLearnCycle(in, E);
 
         window.clear();
 
-        layout.SetTotalError(totalError);
+        layout.SetTotalError(teacher.getLastCycleTotalError());
         layout.SetLearningSpeed(teacher.getLearnSpeed());
         layout.Draw();
 
