@@ -73,7 +73,7 @@ void MyNetwork::LearnNetwork(std::vector <double> Need) {
 		network[0][j].learn(dE_dO[j], learnSpeed);
 	}
 }
-void MyNetwork::changeLearningSpeed(double ls) {
+void MyNetwork::setLearningSpeed(double ls) {
 	learnSpeed = ls;
 }
 std::vector <std::vector <Neiron> > MyNetwork::getNetworkData() {

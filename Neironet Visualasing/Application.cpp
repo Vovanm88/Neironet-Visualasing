@@ -26,23 +26,25 @@ void Application::init()
 		*/
     teacher.addExample({1}, {1});
     teacher.addExample({0}, {0});
-    //teacher.startLearn(net, 0.6);
+    teacher.setLearnSpeed(settings.startLearningSpeed);
+    teacher.assign(net);
+    //teacher.startLearn(0.6);
 }
 
 void Application::start()
 {
-    double totalError, learnSpeed = 0.0001;
+    double totalError;
     double E; // ???
     while (window.isOpen())
     {
         window.checkInput();
         std::vector<double> in;
-        teacher.startLearnVis(net, in, totalError, E, learnSpeed);
+        teacher.doLearnCycle(in, totalError, E);
 
         window.clear();
 
         layout.SetTotalError(totalError);
-        layout.SetLearningSpeed(learnSpeed);
+        layout.SetLearningSpeed(teacher.getLearnSpeed());
         layout.Draw();
 
         std::vector<std::vector<sf::Color>> Neirons = getColors(net, in);

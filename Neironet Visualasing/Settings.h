@@ -23,4 +23,5 @@ class Settings
     };
     MainWindowRendererSettings mainWindowRendererSettings;
     std::vector<unsigned int> net_layers = {1, 1, 1};
+    double startLearningSpeed = 0.0001;
 };
