@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "Dataset.h"
+
 using std::cout;
 class NetworkTeacher {
 public:
@@ -13,10 +15,11 @@ public:
 	void setLearnSpeed(double);
 	double getLearnSpeed();
 	void assign(MyNetwork&);
+	void setDataset(Dataset);
 private:
-	std::vector <std::pair<std::vector <double>, std::vector <double> > > DATASET;
-	int getRandomNumber(int min, int max);
-	double oError(double e);
+	Dataset dataset;
+	static int getRandomNumber(int min, int max);
+	static double oError(double e);
 	double learnSpeed;
 	void raiseLearnSpeed();
 	MyNetwork *net;

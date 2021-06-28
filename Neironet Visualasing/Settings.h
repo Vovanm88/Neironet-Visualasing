@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+#include "Dataset.h"
+
 class Settings
 {
     public:
@@ -24,4 +26,8 @@ class Settings
     MainWindowRendererSettings mainWindowRendererSettings;
     std::vector<unsigned int> net_layers = {1, 1, 1};
     double startLearningSpeed = 0.0001;
+    Dataset dataset{{
+        DataUnit({1},{1}),
+        DataUnit({0},{0}),
+    }};
 };

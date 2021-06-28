@@ -24,8 +24,7 @@ void Application::init()
 		teacher.addExample(std::vector<double>{0, 1, 0, 0}, std::vector<double>{0});
 		teacher.addExample(std::vector<double>{0, 0, 0, 0}, std::vector<double>{1});
 		*/
-    teacher.addExample({1}, {1});
-    teacher.addExample({0}, {0});
+    teacher.setDataset(settings.dataset);
     teacher.setLearnSpeed(settings.startLearningSpeed);
     teacher.assign(net);
     //teacher.startLearn(0.6);

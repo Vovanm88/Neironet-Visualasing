@@ -58,10 +58,15 @@ double lenV2f(sf::Vector2f a, sf::Vector2f b) {
 
 #include "Application.h"
 
-int main()
+void launchApp()
 {
 	Settings settings;
 	Application app(settings);
 	app.init();
 	app.start();
+}
+
+int main()
+{
+	launchApp();
 }
