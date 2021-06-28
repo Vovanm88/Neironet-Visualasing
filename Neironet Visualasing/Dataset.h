@@ -18,7 +18,7 @@ class Dataset
 public:
     Dataset() {}
     Dataset(std::vector<DataUnit> dataUnits_) : dataUnits(dataUnits_) {}
-    DataUnit operator[](int i) { return dataUnits[i]; }
+    DataUnit &operator[](int i) { return dataUnits[i]; }
     void add(DataUnit d) { dataUnits.push_back(d); }
     std::size_t size() { return dataUnits.size(); }
 

@@ -7,24 +7,27 @@
 #include "Dataset.h"
 
 using std::cout;
-class NetworkTeacher {
+class NetworkTeacher
+{
 public:
 	void addExample(std::vector<double> Data, std::vector<double> Answer);
 	void startLearn(double stop);
-	void doLearnCycle(std::vector<double>& in, double& E);
+	void doLearnCycle();
 	void setLearnSpeed(double);
 	double getLearnSpeed();
-	double getLastCycleTotalError();
-	void assign(MyNetwork&);
+	double getTotalError();
+	void assign(MyNetwork &);
 	void setDataset(Dataset);
+	DataUnit getCurrentDataUnit();
+
 private:
 	Dataset dataset;
 	static int getRandomNumber(int min, int max);
+	void selectRandomDataUnit();
 	static double oError(double e);
 	double learnSpeed;
-	double lastTotalError;
+	DataUnit *selectedDataUnit;
 	void raiseLearnSpeed();
 	MyNetwork *net;
 	double calcTotalError();
 };
-

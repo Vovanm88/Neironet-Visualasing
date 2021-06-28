@@ -26,6 +26,8 @@ class Application
 	void start();
     void onWindowClose();
     private:
+    void loop();
+    void updateGraphics();
     Settings settings;
     MainWindowRenderer window;
     MainLayout layout;

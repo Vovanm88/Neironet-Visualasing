@@ -50,7 +50,7 @@ public:
     MainLayout(MainWindowRenderer &window_);
     void setTotalError(double val);
     void setLearningSpeed(double val);
-    void Draw();
+    void draw();
 private:
     const std::string fontName = "Arial";
     sf::Font font;

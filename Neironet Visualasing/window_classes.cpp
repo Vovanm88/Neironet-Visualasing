@@ -123,7 +123,7 @@ void MainLayout::setLearningSpeed(double val)
     learningSpeedText.setString(buffer);
 }
 
-void MainLayout::Draw()
+void MainLayout::draw()
 {
     window->draw(totalErrorText);
     window->draw(learningSpeedText);

@@ -15,44 +15,35 @@ void NetworkTeacher::startLearn(double stop)
 		TotalErrorPerCycle = 0;
 		for (unsigned int i = 0; i < dataset.size(); i++)
 		{
-			int r = getRandomNumber(0, dataset.size() - 1);
-			res = net->Activate(dataset[r].data);
-			net->LearnNetwork(dataset[r].answer);
+			selectRandomDataUnit();
+			res = net->run(selectedDataUnit->data);
+			net->correctLastRun(selectedDataUnit->answer);
 			///*
-			std::cout << "Input {" << dataset[r].data[0] << ", " << dataset[r].data[1] << "} " << '\n';
-			std::cout << "Output = " << res[0] << ", Answer = " << dataset[r].answer[0] << ", Error = " << oError(res[0] - dataset[r].answer[0]) << '\n';
+			std::cout << "Input {" << selectedDataUnit->data[0] << ", " << selectedDataUnit->data[1] << "} " << '\n';
+			std::cout << "Output = " << res[0] << ", Answer = " << selectedDataUnit->answer[0] << ", Error = " << oError(res[0] - selectedDataUnit->answer[0]) << '\n';
 			//*/
 			for (unsigned int j = 0; j < res.size(); j++)
 			{
-				TotalErrorPerCycle += oError(res[j] - dataset[r].answer[j]);
+				TotalErrorPerCycle += oError(res[j] - selectedDataUnit->answer[j]);
 			}
 		}
 		//d2 = d1; // unused
 		//d1 = TotalErrorPerCycle; // unused
 		//cout << "_____CYCLE ENDED______ Total Error = " << TotalErrorPerCycle << ", dE = " << d1 - d2 << '\n' << "n = " << learnSpeed << '\n';
 		raiseLearnSpeed();
-		if (TotalErrorPerCycle < stop)
-		{
-			TotalErrorPerCycle = calcTotalError();
-		}
 	}
 }
 
-void NetworkTeacher::doLearnCycle(std::vector<double> &in, double &E)
+void NetworkTeacher::doLearnCycle()
 {
-	//double d1 = 10e9, d2 = 10e9; //unused
 	net->setLearningSpeed(learnSpeed);
-	int r = getRandomNumber(0, dataset.size() - 1);
-	in = dataset[r].data;
+	selectRandomDataUnit();
 
-	std::vector<double> res;
-	res = net->Activate(dataset[r].data);
-	net->LearnNetwork(dataset[r].answer);
-	E += oError(res[0] - dataset[r].answer[0]);
-	//	std::cout << "Input {" << dataset[r].data[0] << ", " << dataset[r].data[1] << "} " << '\n';
-	//	std::cout << "Output = " << res[0] << ", Answer = " << dataset[r].answer[0] << ", Error = " << oError(res[0] - dataset[r].answer[0]) << '\n';
+	net->run(selectedDataUnit->data);
+	net->correctLastRun(selectedDataUnit->answer);
+	//	std::cout << "Input {" << selectedDataUnit->data[0] << ", " << selectedDataUnit->data[1] << "} " << '\n';
+	//	std::cout << "Output = " << res[0] << ", Answer = " << selectedDataUnit->answer[0] << ", Error = " << oError(res[0] - selectedDataUnit->answer[0]) << '\n';
 	raiseLearnSpeed();
-	lastTotalError = calcTotalError();
 }
 
 void NetworkTeacher::raiseLearnSpeed()
@@ -77,7 +68,7 @@ double NetworkTeacher::calcTotalError()
 	MyNetwork network_copy = *net;
 	for (unsigned int i = 0; i < dataset.size(); i++)
 	{
-		res = network_copy.Activate(dataset[i].data);
+		res = network_copy.run(dataset[i].data);
 		for (unsigned int j = 0; j < res.size(); j++)
 		{
 			TotalErrorPerCycle += oError(res[j] - dataset[i].answer[j]);
@@ -86,6 +77,7 @@ double NetworkTeacher::calcTotalError()
 	return TotalErrorPerCycle;
 }
 
+// [min; max]
 int NetworkTeacher::getRandomNumber(int min, int max)
 {
 
@@ -95,15 +87,23 @@ int NetworkTeacher::getRandomNumber(int min, int max)
 	static const double fraction = 1.0 / (static_cast<double>(4294967296) + 1.0);
 	return static_cast<int>(mrsnRnd() * fraction * (max - min + 1) + min);
 }
+
+void NetworkTeacher::selectRandomDataUnit()
+{
+	int r = getRandomNumber(0, dataset.size() - 1);
+	selectedDataUnit = &dataset[r];
+}
+
 double NetworkTeacher::oError(double e)
 {
 	return e * e / 2;
 }
 
-// Accessors //
+// Getters // Setters //
 
 void NetworkTeacher::setLearnSpeed(double value) { learnSpeed = value; }
 double NetworkTeacher::getLearnSpeed() { return learnSpeed; }
 void NetworkTeacher::assign(MyNetwork &network) { net = &network; }
 void NetworkTeacher::setDataset(Dataset dataset_) { dataset = dataset_; }
-double NetworkTeacher::getLastCycleTotalError() { return lastTotalError; }
+double NetworkTeacher::getTotalError() { return calcTotalError(); }
+DataUnit NetworkTeacher::getCurrentDataUnit() { return *selectedDataUnit; }

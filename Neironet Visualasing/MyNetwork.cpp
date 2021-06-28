@@ -37,7 +37,7 @@ MyNetwork::MyNetwork(size_t nlayers, std::vector<unsigned int> vnInLayer, std::s
 		//std::fill(network[i].begin(), network[i].end(),Neiron(nInLayer, arch));
 	}
 }
-std::vector<double> MyNetwork::Activate(std::vector <double> input) {
+std::vector<double> MyNetwork::run(std::vector <double> input) {
 	std::vector<double> lastLayerOutput, thisLayer;
 	lastLayerOutput = input;
 	for (unsigned int i = 0; i < layers; i++) {
@@ -51,10 +51,10 @@ std::vector<double> MyNetwork::Activate(std::vector <double> input) {
 	output = lastLayerOutput;
 	return lastLayerOutput;
 }
-void MyNetwork::LearnNetwork(std::vector <double> Need) {
+void MyNetwork::correctLastRun(std::vector <double> target) {
 	std::vector<double> dE_dO;
 	for (int i = 0; i < output.size(); i++) {
-		dE_dO.push_back(output[i] - Need[i]);
+		dE_dO.push_back(output[i] - target[i]);
 	}
 	for (unsigned int i = layers - 1; i > 0; i--) {
 
