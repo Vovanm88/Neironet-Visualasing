@@ -12,6 +12,10 @@
 #include <regex>
 #include <filesystem>
 
+#ifdef _WIN32
+#include <format>
+#endif
+
 namespace fs = std::filesystem;
 
 std::vector<fs::directory_entry> getAllFiles(std::string dirName);
