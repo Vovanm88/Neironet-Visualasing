@@ -83,6 +83,7 @@ double NetworkTeacher::calcTotalError()
 			TotalErrorPerCycle += oError(res[j] - DATASET[i].second[j]);
 		}
 	}
+	return TotalErrorPerCycle;
 }
 
 int NetworkTeacher::getRandomNumber(int min, int max)
