@@ -17,11 +17,11 @@ class Dataset
 {
 public:
     Dataset() {}
-    Dataset(std::vector<DataUnit> data_units_) : data_units(data_units_) {}
-    DataUnit operator[](int i) { return data_units[i]; }
-    void add(DataUnit d) { data_units.push_back(d); }
-    std::size_t size() { return data_units.size(); }
+    Dataset(std::vector<DataUnit> dataUnits_) : dataUnits(dataUnits_) {}
+    DataUnit operator[](int i) { return dataUnits[i]; }
+    void add(DataUnit d) { dataUnits.push_back(d); }
+    std::size_t size() { return dataUnits.size(); }
 
 private:
-    std::vector<DataUnit> data_units;
+    std::vector<DataUnit> dataUnits;
 };

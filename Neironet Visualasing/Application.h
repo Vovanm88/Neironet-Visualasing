@@ -24,9 +24,8 @@ class Application
     Application(Settings settings_);
     void init();
 	void start();
-    void onClose();
+    void onWindowClose();
     private:
-    bool is_running;
     Settings settings;
     MainWindowRenderer window;
     MainLayout layout;
