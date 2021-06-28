@@ -3,7 +3,7 @@
 
 namespace fs = std::filesystem;
 
-std::vector<fs::directory_entry> GetAllFiles(std::string dirName)
+std::vector<fs::directory_entry> getAllFiles(std::string dirName)
 {
     if (!fs::exists(dirName) || !fs::is_directory(dirName))
         return {};
@@ -14,7 +14,7 @@ std::vector<fs::directory_entry> GetAllFiles(std::string dirName)
     {
         if (entry.is_directory())
         {
-            auto new_files = GetAllFiles(entry.path());
+            auto new_files = getAllFiles(entry.path());
             files.insert(files.end(), new_files.begin(), new_files.end());
         }
         else
@@ -25,7 +25,7 @@ std::vector<fs::directory_entry> GetAllFiles(std::string dirName)
     return files;
 }
 
-std::string GetFontPath(std::string fontName)
+std::string getFontPath(std::string fontName)
 {
 #ifdef __linux__
     std::string fontPaths[] = {"/usr/share/fonts",
@@ -43,7 +43,7 @@ std::string GetFontPath(std::string fontName)
 
     for (std::string path : fontPaths)
     {
-        for (auto entry : GetAllFiles(path))
+        for (auto entry : getAllFiles(path))
         {
             auto name = entry.path().filename().string();
             boost::to_lower(name);
@@ -59,9 +59,9 @@ std::string GetFontPath(std::string fontName)
 
 MainWindowRenderer::MainWindowRenderer(Settings::MainWindowRendererSettings settings, Application &app_)
     : window(sf::VideoMode(settings.width, settings.height),
-             settings.title, sf::Style::Default, settings.context_settings),
-    app(&app_),
-    clear_color(settings.clear_color)
+             settings.title, sf::Style::Default, settings.contextSettings),
+      app(&app_),
+      clearColor(settings.clearColor)
 {
 }
 
@@ -69,10 +69,10 @@ bool MainWindowRenderer::isOpen() { return window.isOpen(); }
 bool MainWindowRenderer::pollEvent(sf::Event &ev) { return window.pollEvent(ev); }
 void MainWindowRenderer::close()
 {
-    app->onClose();
+    app->onWindowClose();
     window.close();
 }
-void MainWindowRenderer::clear() { window.clear(clear_color); }
+void MainWindowRenderer::clear() { window.clear(clearColor); }
 void MainWindowRenderer::draw(sf::Drawable &obj) { window.draw(obj); }
 void MainWindowRenderer::display() { window.display(); }
 void MainWindowRenderer::checkInput()
@@ -93,38 +93,38 @@ void MainWindowRenderer::checkInput()
     }
 }
 
-MainLayout::MainLayout(MainWindowRenderer &window)
+MainLayout::MainLayout(MainWindowRenderer &window_)
+    : window(&window_)
 {
-    _window = &window;
-    if (!_font.loadFromFile(GetFontPath(_fontName)))
+    if (!font.loadFromFile(getFontPath(fontName)))
     {
         std::cout << "Warning: font not found. loading random font";
-        assert(_font.loadFromFile(GetFontPath(".*")));
+        assert(font.loadFromFile(getFontPath(".*")));
     }
-    _totalErrorText.setFont(_font);
-    _totalErrorText.setCharacterSize(24); // in pixels, not points!
-    _totalErrorText.setFillColor(sf::Color::White);
+    totalErrorText.setFont(font);
+    totalErrorText.setCharacterSize(24); // in pixels, not points!
+    totalErrorText.setFillColor(sf::Color::White);
 
-    _learningSpeedText.setFont(_font);
-    _learningSpeedText.setCharacterSize(16); // in pixels, not points!
-    _learningSpeedText.setFillColor(sf::Color::White);
-    _learningSpeedText.setPosition(sf::Vector2f(500.f, 30.f));
+    learningSpeedText.setFont(font);
+    learningSpeedText.setCharacterSize(16); // in pixels, not points!
+    learningSpeedText.setFillColor(sf::Color::White);
+    learningSpeedText.setPosition(sf::Vector2f(500.f, 30.f));
 }
 
-void MainLayout::SetTotalError(double val)
+void MainLayout::setTotalError(double val)
 {
     sprintf(buffer, "Total Error = %f", val);
-    _totalErrorText.setString(buffer);
+    totalErrorText.setString(buffer);
 }
 
-void MainLayout::SetLearningSpeed(double val)
+void MainLayout::setLearningSpeed(double val)
 {
     sprintf(buffer, "Learning speed %f", val);
-    _learningSpeedText.setString(buffer);
+    learningSpeedText.setString(buffer);
 }
 
 void MainLayout::Draw()
 {
-    _window->draw(_totalErrorText);
-    _window->draw(_learningSpeedText);
+    window->draw(totalErrorText);
+    window->draw(learningSpeedText);
 }

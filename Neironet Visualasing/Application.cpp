@@ -6,7 +6,7 @@ Application::Application(Settings settings_)
     : settings(settings_),
       window(settings.mainWindowRendererSettings, *this),
       layout(window),
-      net(settings.net_layers.size() - 1, settings.net_layers, "Logistic", 1)
+      net(settings.netLayers.size() - 1, settings.netLayers, "Logistic", 1)
 {
 }
 
@@ -41,8 +41,8 @@ void Application::start()
 
         window.clear();
 
-        layout.SetTotalError(teacher.getLastCycleTotalError());
-        layout.SetLearningSpeed(teacher.getLearnSpeed());
+        layout.setTotalError(teacher.getLastCycleTotalError());
+        layout.setLearningSpeed(teacher.getLearnSpeed());
         layout.Draw();
 
         std::vector<std::vector<sf::Color>> Neirons = getColors(net, in);
@@ -107,7 +107,7 @@ void Application::start()
     }
 }
 
-void Application::onClose()
+void Application::onWindowClose()
 {
     //cout << "saveData" << &net;
     net.saveData("neironetData.ndat");

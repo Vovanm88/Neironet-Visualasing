@@ -12,7 +12,7 @@ class Settings
         unsigned int width = 800;
         unsigned int height = 600;
         std::string title = "Neironet";
-        sf::ContextSettings context_settings{
+        sf::ContextSettings contextSettings{
             0, // depth (0)
             0, // stencil (0)
             8, // antialiasing (0)
@@ -21,10 +21,10 @@ class Settings
             0, // arrtributes (Default = 0)
             false // sRgb (false)
         };
-        sf::Color clear_color = sf::Color(30, 30, 31);
+        sf::Color clearColor = sf::Color(30, 30, 31);
     };
     MainWindowRendererSettings mainWindowRendererSettings;
-    std::vector<unsigned int> net_layers = {1, 1, 1};
+    std::vector<unsigned int> netLayers = {1, 1, 1};
     double startLearningSpeed = 0.0001;
     Dataset dataset{{
         DataUnit({1},{1}),

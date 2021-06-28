@@ -14,9 +14,9 @@
 
 namespace fs = std::filesystem;
 
-std::vector<fs::directory_entry> GetAllFiles(std::string dirName);
+std::vector<fs::directory_entry> getAllFiles(std::string dirName);
 
-std::string GetFontPath(std::string fontName);
+std::string getFontPath(std::string fontName);
 
 class Application;
 
@@ -37,7 +37,7 @@ public:
 
 private:
     sf::RenderWindow window;
-    sf::Color clear_color;
+    sf::Color clearColor;
     Application *app;
 };
 
@@ -47,15 +47,15 @@ MainWindowRenderer InitWindow();
 class MainLayout
 {
 public:
-    MainLayout(MainWindowRenderer &window);
-    void SetTotalError(double val);
-    void SetLearningSpeed(double val);
+    MainLayout(MainWindowRenderer &window_);
+    void setTotalError(double val);
+    void setLearningSpeed(double val);
     void Draw();
 private:
-    const std::string _fontName = "Arial";
-    sf::Font _font;
-    MainWindowRenderer *_window;
-    sf::Text _totalErrorText;
-    sf::Text _learningSpeedText;
+    const std::string fontName = "Arial";
+    sf::Font font;
+    MainWindowRenderer *window;
+    sf::Text totalErrorText;
+    sf::Text learningSpeedText;
     char buffer[32];
 };
