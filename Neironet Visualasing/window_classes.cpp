@@ -14,7 +14,7 @@ std::vector<fs::directory_entry> getAllFiles(std::string dirName)
     {
         if (entry.is_directory())
         {
-            auto new_files = getAllFiles(entry.path());
+            auto new_files = getAllFiles(entry.path().string());
             files.insert(files.end(), new_files.begin(), new_files.end());
         }
         else
@@ -32,7 +32,7 @@ std::string getFontPath(std::string fontName)
                                "/usr/local/share/fonts",
                                "~/.fonts"};
 #elif _WIN32
-    std::string fontPaths[] = {"%WINDIR%/Fonts"};
+    std::string fontPaths[] = {"%WINDIR%/Fonts", "C:/Windows/Fonts"};
 #else
     throw "Unsupported system";
 #endif
@@ -49,7 +49,7 @@ std::string getFontPath(std::string fontName)
             boost::to_lower(name);
             if (std::regex_match(name, font_file_regex))
             {
-                return entry.path();
+                return entry.path().string();
             }
         }
     }
@@ -113,14 +113,26 @@ MainLayout::MainLayout(MainWindowRenderer &window_)
 
 void MainLayout::setTotalError(double val)
 {
+    #ifdef __linux__
     sprintf(buffer, "Total Error = %f", val);
     totalErrorText.setString(buffer);
+    #elif _WIN32
+    totalErrorText.setString(std::format("Total Error = {:.5f}", val));
+    #else
+    throw "Unsupported system";
+    #endif
 }
 
 void MainLayout::setLearningSpeed(double val)
 {
+    #ifdef __linux__
     sprintf(buffer, "Learning speed %f", val);
     learningSpeedText.setString(buffer);
+    #elif _WIN32
+    learningSpeedText.setString(std::format("Learning speed {:.6f}", val));
+    #else
+    throw "Unsupported system";
+    #endif
 }
 
 void MainLayout::draw()
