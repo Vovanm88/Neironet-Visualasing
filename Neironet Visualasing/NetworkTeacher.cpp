@@ -4,9 +4,6 @@ void NetworkTeacher::addExample(std::vector<double> Data, std::vector<double> An
 	DATASET.push_back(std::make_pair(Data, Answer));
 }
 void NetworkTeacher::startLearn(MyNetwork& net, double stop) {
-	//std::srand(static_cast<unsigned int>(time(0)));
-	std::random_device rd;
-	std::mt19937 mrsnRnd(rd());
 	double TotalErrorPerCycle = stop + 1;
 	double learnSpeed = 0.05;
 	std::vector <double> res;
@@ -15,7 +12,7 @@ void NetworkTeacher::startLearn(MyNetwork& net, double stop) {
 		net.changeLearningSpeed(learnSpeed);
 		TotalErrorPerCycle = 0;
 		for (unsigned int i = 0; i < DATASET.size(); i++) {
-			int r = getRandomNumber(0, DATASET.size() - 1, mrsnRnd);
+			int r = getRandomNumber(0, DATASET.size() - 1);
 			res = net.Activate(DATASET[r].first);
 			net.LearnNetwork(DATASET[r].second);
 			///*
@@ -50,12 +47,10 @@ void NetworkTeacher::startLearn(MyNetwork& net, double stop) {
 }
 
 void NetworkTeacher::startLearnVis(MyNetwork& net, std::vector<double>& in, double& TE, double& E, double& learnSpeed) {
-	std::random_device rd;
-	std::mt19937 mrsnRnd(rd());
 	std::vector <double> res;
 	double d1 = 10e9, d2 = 10e9;
 	net.changeLearningSpeed(learnSpeed);
-	int r = getRandomNumber(0, DATASET.size() - 1, mrsnRnd);
+	int r = getRandomNumber(0, DATASET.size() - 1);
 	in = DATASET[r].first;
 
 	res = net.Activate(DATASET[r].first);
@@ -83,8 +78,11 @@ void NetworkTeacher::startLearnVis(MyNetwork& net, std::vector<double>& in, doub
 	TE = TotalErrorPerCycle;
 }
 
-int NetworkTeacher::getRandomNumber(int min, int max, std::mt19937& mrsnRnd) {
+int NetworkTeacher::getRandomNumber(int min, int max) {
 
+	//std::srand(static_cast<unsigned int>(time(0)));
+	std::random_device rd;
+	std::mt19937 mrsnRnd(rd());
 	static const double fraction = 1.0 / (static_cast<double>(4294967296) + 1.0);
 	return static_cast<int>(mrsnRnd() * fraction * (max - min + 1) + min);
 }

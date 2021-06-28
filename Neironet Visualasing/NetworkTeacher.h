@@ -12,7 +12,7 @@ public:
 	void startLearnVis(MyNetwork& net, std::vector<double>& in, double& TE, double& E, double& learnSpeed);
 private:
 	std::vector <std::pair<std::vector <double>, std::vector <double> > > DATASET;
-	int getRandomNumber(int min, int max, std::mt19937& mrsnRnd);
+	int getRandomNumber(int min, int max);
 	double oError(double e);
 };
 

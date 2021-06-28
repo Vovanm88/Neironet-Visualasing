@@ -31,16 +31,17 @@ void Application::init()
 
 void Application::start()
 {
-    double TE, E, learnSpeed = 0.0001;
+    double totalError, learnSpeed = 0.0001;
+    double E; // ???
     while (window.isOpen())
     {
         window.checkInput();
         std::vector<double> in;
-        teacher.startLearnVis(net, in, TE, E, learnSpeed);
+        teacher.startLearnVis(net, in, totalError, E, learnSpeed);
 
         window.clear();
 
-        layout.SetTotalError(TE);
+        layout.SetTotalError(totalError);
         layout.SetLearningSpeed(learnSpeed);
         layout.Draw();
 
