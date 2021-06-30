@@ -6,7 +6,7 @@ Application::Application(Settings settings_)
     : settings(settings_),
       window(settings.mainWindowRendererSettings, *this),
       layout(window),
-      net(settings.netLayers.size() - 1, settings.netLayers, "Logistic", 1)
+      net(settings.netLayers.size() - 1, settings.netLayers, NeironArch::Logistic, 1)
 {
 }
 
@@ -24,9 +24,12 @@ void Application::init()
 		teacher.addExample(std::vector<double>{0, 1, 0, 0}, std::vector<double>{0});
 		teacher.addExample(std::vector<double>{0, 0, 0, 0}, std::vector<double>{1});
 		*/
-    teacher.setDataset(settings.dataset);
+    teacher.setDataset(settings.learnDataset);
     teacher.setLearnSpeed(settings.startLearningSpeed);
     teacher.assign(net);
+
+    tester.setDataset(settings.testingDataset);
+    tester.assign(net);
     //teacher.startLearn(0.6);
 }
 
@@ -49,7 +52,8 @@ void Application::updateGraphics()
 {
     window.clear();
 
-    layout.setTotalError(teacher.getTotalError());
+    layout.setLearnAveregeError(teacher.getTotalError());
+    layout.setTestingAveregeError(tester.getTotalError());
     layout.setLearningSpeed(teacher.getLearnSpeed());
     layout.draw();
 

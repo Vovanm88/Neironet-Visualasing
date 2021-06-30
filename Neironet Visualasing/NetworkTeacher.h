@@ -2,6 +2,7 @@
 #include "MyNetwork.h"
 #include <utility>
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 
 #include "Dataset.h"
@@ -29,5 +30,5 @@ private:
 	DataUnit *selectedDataUnit;
 	void raiseLearnSpeed();
 	MyNetwork *net;
-	double calcTotalError();
+	double calcAveregeError();
 };

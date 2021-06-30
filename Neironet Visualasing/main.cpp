@@ -1,6 +1,7 @@
 #include "main_funcs.h"
 
-sf::Color Colorise(double i) {
+sf::Color Colorise(double i)
+{
 	int r, g, b;
 	/*
 	b = (int)(255 * std::min(1.0, std::max(0.0, i)));
@@ -13,38 +14,48 @@ sf::Color Colorise(double i) {
 	return sf::Color(r, g, b);
 }
 
-std::vector <std::vector <sf::Color> > getColors(MyNetwork &nt, std::vector <double> input){
-	std::vector <std::vector <Neiron> > ntwrk = nt.getNetworkData();
-	std::vector <std::vector <sf::Color> > output(ntwrk.size()+1);
-	for (double el : input) {
+std::vector<std::vector<sf::Color>> getColors(MyNetwork &nt, std::vector<double> input)
+{
+	std::vector<std::vector<Neiron *>> ntwrk = nt.getNetworkData();
+	std::vector<std::vector<sf::Color>> output(ntwrk.size() + 1);
+	for (double el : input)
+	{
 		output[0].push_back(Colorise(el));
 	}
 	output[0].push_back(sf::Color(255, 255, 0));
-	for (size_t i = 0; i < ntwrk.size(); i++) {
-		for (size_t j = 0; j < ntwrk[i].size(); j++) {
-			output[i+1].push_back(Colorise(ntwrk[i][j].output));
+	for (size_t i = 0; i < ntwrk.size(); i++)
+	{
+		for (size_t j = 0; j < ntwrk[i].size(); j++)
+		{
+			output[i + 1].push_back(Colorise(ntwrk[i][j]->output));
 		}
-		if(i+1<ntwrk.size())
-			output[i+1].push_back(sf::Color(255, 255, 0));
+		if (i + 1 < ntwrk.size())
+			output[i + 1].push_back(sf::Color(255, 255, 0));
 	}
 	return output;
 }
 
-
-std::vector < Sinaps > getConnections(MyNetwork& nt) {
-	std::vector <std::vector <Neiron> > ntwrk = nt.getNetworkData();
-	std::vector <Sinaps> output;
-	for (size_t i = 0; i < ntwrk.size(); i++) {
-		for (size_t j = 0; j < ntwrk[i].size(); j++) {
-			for (size_t k = 0; k < ntwrk[i][j].W.size(); k++) {
+std::vector<Sinaps> getConnections(MyNetwork &nt)
+{
+	std::vector<std::vector<Neiron *>> ntwrk = nt.getNetworkData();
+	std::vector<Sinaps> output;
+	for (size_t i = 0; i < ntwrk.size(); i++)
+	{
+		for (size_t j = 0; j < ntwrk[i].size(); j++)
+		{
+			for (size_t k = 0; k < ntwrk[i][j]->weights.size(); k++)
+			{
 				Sinaps tmp;
-				tmp.w = static_cast<float>(4.0 / (1 + std::exp(3 - (std::abs(ntwrk[i][j].W[k]))))+0.6);
-				if (ntwrk[i][j].W[k] < 0) {
-					tmp.col =sf::Color(255, 0, 0);
-				}else {
+				tmp.w = static_cast<float>(4.0 / (1 + std::exp(3 - (std::abs(ntwrk[i][j]->weights[k])))) + 0.6);
+				if (ntwrk[i][j]->weights[k] < 0)
+				{
+					tmp.col = sf::Color(255, 0, 0);
+				}
+				else
+				{
 					tmp.col = sf::Color(0, 0, 255);
 				}
-				tmp.owner = {i+1, j};
+				tmp.owner = {i + 1, j};
 				tmp.connect = {i, k};
 				output.push_back(tmp);
 			}
@@ -52,7 +63,8 @@ std::vector < Sinaps > getConnections(MyNetwork& nt) {
 	}
 	return output;
 }
-double lenV2f(sf::Vector2f a, sf::Vector2f b) {
+double lenV2f(sf::Vector2f a, sf::Vector2f b)
+{
 	return std::sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
 

@@ -1,7 +1,7 @@
 #include "MyNetwork.h"
 
-
-MyNetwork::MyNetwork(size_t nlayers, size_t nInLayer, std::string arch, double n) {
+MyNetwork::MyNetwork(size_t nlayers, size_t nInLayer, NeironArch arch, double n)
+{
 
 	std::random_device rd;
 	std::mt19937 mrsnRnd(rd());
@@ -10,17 +10,19 @@ MyNetwork::MyNetwork(size_t nlayers, size_t nInLayer, std::string arch, double n
 	layers = nlayers;
 	network.resize(layers);
 	NeironLayers.resize(layers);
-	for (unsigned int i = 0; i < layers; i++) {
-		NeironLayers[i] = nInLayer;
-		std::vector <Neiron> nntmp(nInLayer, Neiron(nInLayer + 1, arch, mrsnRnd));
+	for (unsigned int layerIndx = 0; layerIndx < layers; layerIndx++)
+	{
+		NeironLayers[layerIndx] = nInLayer;
+		std::vector<Neiron *> nntmp(nInLayer, Neiron::factory(nInLayer + 1, arch, mrsnRnd));
 
-		//network[i].resize(nInLayer);
-		network[i] = nntmp;
-		//std::fill(network[i].begin(), network[i].end(),Neiron(nInLayer, arch));
+		//network[layerIndx].resize(nInLayer);
+		network[layerIndx] = nntmp;
+		//std::fill(network[layerIndx].begin(), network[layerIndx].end(),Neiron(nInLayer, arch));
 	}
 	NeironLayers.push_back(nInLayer);
 }
-MyNetwork::MyNetwork(size_t nlayers, std::vector<unsigned int> vnInLayer, std::string arch, double n) {
+MyNetwork::MyNetwork(size_t nlayers, std::vector<unsigned int> vnInLayer, NeironArch arch, double n)
+{
 	std::random_device rd;
 	std::mt19937 mrsnRnd(rd());
 	learnSpeed = n;
@@ -29,85 +31,109 @@ MyNetwork::MyNetwork(size_t nlayers, std::vector<unsigned int> vnInLayer, std::s
 	network.resize(layers);
 	NeironLayers.resize(layers);
 	NeironLayers = vnInLayer;
-	for (size_t i = 0; i < layers; i++) {
-		//NeironLayers[i] = vnInLayer[i];
-		std::vector <Neiron> nntmp(vnInLayer[i + 1], Neiron(vnInLayer[i] + 1, arch, mrsnRnd));
-		//network[i].resize(nInLayer);
-		network[i] = nntmp;
-		//std::fill(network[i].begin(), network[i].end(),Neiron(nInLayer, arch));
+	for (size_t layerIndx = 0; layerIndx < layers; layerIndx++)
+	{
+		//NeironLayers[layerIndx] = vnInLayer[layerIndx];
+		std::vector<Neiron *> nntmp(vnInLayer[layerIndx + 1]);
+		for (size_t j = 0; j < nntmp.size(); j++)
+		{
+			nntmp[j] = Neiron::factory(vnInLayer[layerIndx] + 1, arch, mrsnRnd);
+		}
+		//network[layerIndx].resize(nInLayer);
+		network[layerIndx] = nntmp;
+		//std::fill(network[layerIndx].begin(), network[layerIndx].end(),Neiron(nInLayer, arch));
 	}
 }
-std::vector<double> MyNetwork::run(std::vector <double> input) {
-	std::vector<double> lastLayerOutput, thisLayer;
+std::vector<double> MyNetwork::run(std::vector<double> input)
+{
+	std::vector<double> lastLayerOutput;
 	lastLayerOutput = input;
-	for (unsigned int i = 0; i < layers; i++) {
+	for (unsigned int layerIndx = 0; layerIndx < layers; layerIndx++)
+	{
 		std::vector<double> thisLayer;
-		lastLayerOutput.push_back(0);
-		for (unsigned int j = 0; j < NeironLayers[i+1]; j++) {
-			thisLayer.push_back(network[i][j].work(lastLayerOutput));
+		lastLayerOutput.push_back(1);
+		for (unsigned int j = 0; j < NeironLayers[layerIndx + 1]; j++)
+		{
+			thisLayer.push_back(network[layerIndx][j]->work(lastLayerOutput));
 		}
 		lastLayerOutput = thisLayer;
 	}
 	output = lastLayerOutput;
 	return lastLayerOutput;
 }
-void MyNetwork::correctLastRun(std::vector <double> target) {
-	std::vector<double> dE_dO;
-	for (int i = 0; i < output.size(); i++) {
-		dE_dO.push_back(output[i] - target[i]);
+void MyNetwork::correctLastRun(std::vector<double> target)
+{
+	std::vector<double> errorValues;
+	for (int i = 0; i < output.size(); i++)
+	{
+		errorValues.push_back(output[i] - target[i]);
 	}
-	for (unsigned int i = layers - 1; i > 0; i--) {
+	for (unsigned int layerIndx = layers - 1; layerIndx > 0; layerIndx--)
+	{
+		for (unsigned int j = 0; j < NeironLayers[layerIndx + 1]; j++)
+		{
+			network[layerIndx][j]->learn(errorValues[j], learnSpeed);
+		}
 
-		std::vector<double> dHelper(NeironLayers[i], 0);
-		for (unsigned int k = 0; k < NeironLayers[i]; k++) {
-			for (unsigned int j = 0; j < NeironLayers[i + 1]; j++) {
-				dHelper[k] += (network[i][j].d * network[i][j].W[k]);
+		std::vector<double> newErrorValues(NeironLayers[layerIndx], 0);
+		for (unsigned int k = 0; k < NeironLayers[layerIndx]; k++)
+		{
+			for (unsigned int j = 0; j < NeironLayers[layerIndx + 1]; j++)
+			{
+				newErrorValues[k] += (network[layerIndx][j]->d * network[layerIndx][j]->weights[k]);
 			}
 		}
-		for (unsigned int j = 0; j < NeironLayers[i+1]; j++) {
-			network[i][j].learn(dE_dO[j], learnSpeed);
-		}
-		dE_dO = dHelper;
+		errorValues = newErrorValues;
 	}
-	for (unsigned int j = 0; j < NeironLayers[1]; j++) {
-		network[0][j].learn(dE_dO[j], learnSpeed);
+	for (unsigned int j = 0; j < NeironLayers[1]; j++)
+	{
+		network[0][j]->learn(errorValues[j], learnSpeed);
 	}
 }
-void MyNetwork::setLearningSpeed(double ls) {
+void MyNetwork::setLearningSpeed(double ls)
+{
 	learnSpeed = ls;
 }
-std::vector <std::vector <Neiron> > MyNetwork::getNetworkData() {
+std::vector<std::vector<Neiron *>> MyNetwork::getNetworkData()
+{
 	return network;
 }
-int MyNetwork::saveData(std::string dataPath) {
-	
+int MyNetwork::saveData(std::string dataPath)
+{
+
 	// The save file had this content:
 	// first line contain number of layers - nL and type of activation function
 	// second line coitain (nL+1) numbers that means number of neirons of each layers
 	// next lines contains weights of each neiron, one line per neiron
-	
+
 	std::ofstream fout(dataPath, std::ios_base::trunc);
-	if (!fout.is_open()) {
+	if (!fout.is_open())
+	{
 		return 1;
 	}
 	fout << layers << ' ' << activationFunction << '\n';
-	for (const auto &onelayer: NeironLayers) {
-		fout << onelayer <<' ';
+	for (const auto &onelayer : NeironLayers)
+	{
+		fout << onelayer << ' ';
 	}
 	fout << '\n';
-	for (const auto &it_layer: network) {
-		for (const auto &it_neiron : it_layer) {
-			//fout << it_neiron.W.size()<<" ";
-			for (const double &it_weight : it_neiron.W) {
+	for (const auto &it_layer : network)
+	{
+		for (const auto &it_neiron : it_layer)
+		{
+			//fout << it_neiron.weights.size()<<" ";
+			for (const double &it_weight : it_neiron->weights)
+			{
 				fout << it_weight << ' ';
 			}
-			fout <<'\n';
+			fout << '\n';
 		}
 	}
 	fout.close();
 	return 0;
 }
-int MyNetwork::loadData(std::string dataPath) {
+int MyNetwork::loadData(std::string dataPath)
+{
 	std::random_device rd;
 	std::mt19937 mrsnRnd(rd());
 	/*
@@ -115,33 +141,66 @@ int MyNetwork::loadData(std::string dataPath) {
 	network.resize(layers);
 	NeironLayers.resize(layers);
 	NeironLayers = vnInLayer;
-	for (size_t i = 0; i < layers; i++) {
-		//NeironLayers[i] = vnInLayer[i];
-		std::vector <Neiron> nntmp(vnInLayer[i + 1], Neiron(vnInLayer[i] + 1, arch, mrsnRnd));
-		//network[i].resize(nInLayer);
-		network[i] = nntmp;
-		//std::fill(network[i].begin(), network[i].end(),Neiron(nInLayer, arch));
+	for (size_t layerIndx = 0; layerIndx < layers; layerIndx++) {
+		//NeironLayers[layerIndx] = vnInLayer[layerIndx];
+		std::vector <Neiron> nntmp(vnInLayer[layerIndx + 1], Neiron(vnInLayer[layerIndx] + 1, arch, mrsnRnd));
+		//network[layerIndx].resize(nInLayer);
+		network[layerIndx] = nntmp;
+		//std::fill(network[layerIndx].begin(), network[layerIndx].end(),Neiron(nInLayer, arch));
 	}
 	*/
 	std::ifstream finput(dataPath);
-	if (!finput.is_open()) {
+	if (!finput.is_open())
+	{
 		return 1;
 	}
-	finput >> layers >> activationFunction;
+
+	int af;
+	finput >> layers >> af;
+	activationFunction = (NeironArch)af;
+
 	NeironLayers.clear();
 	NeironLayers.resize(layers + 1);
-	for (auto& nInLayer : NeironLayers) {
+	for (auto &nInLayer : NeironLayers)
+	{
 		finput >> nInLayer;
 	}
 	network.resize(layers);
-	for (size_t i = 0; i < layers; i++) {
-		std::vector <Neiron> nntmp(NeironLayers[i + 1], Neiron(NeironLayers[i] + 1, activationFunction, mrsnRnd));
-		for (auto &it_neiron : nntmp) {
-			for (auto &it_weight : it_neiron.W) {
+	for (size_t layerIndx = 0; layerIndx < layers; layerIndx++)
+	{
+		std::vector<Neiron *> nntmp(NeironLayers[layerIndx + 1], Neiron::factory(NeironLayers[layerIndx] + 1, activationFunction, mrsnRnd));
+		for (auto &it_neiron : nntmp)
+		{
+			for (auto &it_weight : it_neiron->weights)
+			{
 				finput >> it_weight;
 			}
 		}
-		network[i] = nntmp;
+		network[layerIndx] = nntmp;
 	}
 	return 0;
+}
+
+MyNetwork::~MyNetwork()
+{
+	for (auto layer : network)
+	{
+		for (auto neiron : layer)
+		{
+			delete neiron;
+		}
+	}
+}
+
+MyNetwork MyNetwork::clone()
+{
+	MyNetwork net_copy = *this;
+	for (size_t layerIndx = 0; layerIndx < this->network.size(); layerIndx++)
+	{
+		for (size_t j = 0; j < this->network[layerIndx].size(); j++)
+		{
+			net_copy.network[layerIndx][j] = this->network[layerIndx][j]->clone();
+		}
+	}
+	return net_copy;
 }

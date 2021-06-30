@@ -101,9 +101,14 @@ MainLayout::MainLayout(MainWindowRenderer &window_)
         std::cout << "Warning: font not found. loading random font";
         assert(font.loadFromFile(getFontPath(".*")));
     }
-    totalErrorText.setFont(font);
-    totalErrorText.setCharacterSize(24); // in pixels, not points!
-    totalErrorText.setFillColor(sf::Color::White);
+    learnAveregeErrorText.setFont(font);
+    learnAveregeErrorText.setCharacterSize(24); // in pixels, not points!
+    learnAveregeErrorText.setFillColor(sf::Color::White);
+
+    testingAveregeErrorText.setFont(font);
+    testingAveregeErrorText.setCharacterSize(24); // in pixels, not points!
+    testingAveregeErrorText.setFillColor(sf::Color::White);
+    testingAveregeErrorText.setPosition(sf::Vector2f(0.f, 30.f));
 
     learningSpeedText.setFont(font);
     learningSpeedText.setCharacterSize(16); // in pixels, not points!
@@ -111,13 +116,25 @@ MainLayout::MainLayout(MainWindowRenderer &window_)
     learningSpeedText.setPosition(sf::Vector2f(500.f, 30.f));
 }
 
-void MainLayout::setTotalError(double val)
+void MainLayout::setLearnAveregeError(double val)
 {
     #ifdef __linux__
-    sprintf(buffer, "Total Error = %f", val);
-    totalErrorText.setString(buffer);
+    sprintf(buffer, "Averege Learning Error = %f", val);
+    learnAveregeErrorText.setString(buffer);
     #elif _WIN32
-    totalErrorText.setString(std::format("Total Error = {:.5f}", val));
+    learnAveregeErrorText.setString(std::format("Averege Learning Error = {:.5f}", val));
+    #else
+    throw "Unsupported system";
+    #endif
+}
+
+void MainLayout::setTestingAveregeError(double val)
+{
+    #ifdef __linux__
+    sprintf(buffer, "Averege Testing Error = %f", val);
+    testingAveregeErrorText.setString(buffer);
+    #elif _WIN32
+    testingAveregeErrorText.setString(std::format("Averege Testing Error = {:.5f}", val));
     #else
     throw "Unsupported system";
     #endif
@@ -137,6 +154,7 @@ void MainLayout::setLearningSpeed(double val)
 
 void MainLayout::draw()
 {
-    window->draw(totalErrorText);
+    window->draw(learnAveregeErrorText);
+    window->draw(testingAveregeErrorText);
     window->draw(learningSpeedText);
 }

@@ -52,14 +52,16 @@ class MainLayout
 {
 public:
     MainLayout(MainWindowRenderer &window_);
-    void setTotalError(double val);
+    void setLearnAveregeError(double val);
+    void setTestingAveregeError(double val);
     void setLearningSpeed(double val);
     void draw();
 private:
     const std::string fontName = "Arial";
     sf::Font font;
     MainWindowRenderer *window;
-    sf::Text totalErrorText;
+    sf::Text learnAveregeErrorText;
+    sf::Text testingAveregeErrorText;
     sf::Text learningSpeedText;
-    char buffer[32];
+    char buffer[64];
 };

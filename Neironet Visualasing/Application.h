@@ -32,5 +32,6 @@ class Application
     MainWindowRenderer window;
     MainLayout layout;
     NetworkTeacher teacher;
+    NetworkTeacher tester;
     MyNetwork net;
 };

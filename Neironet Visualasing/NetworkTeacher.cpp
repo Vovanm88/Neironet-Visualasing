@@ -61,11 +61,11 @@ void NetworkTeacher::raiseLearnSpeed()
 	}
 }
 
-double NetworkTeacher::calcTotalError()
+double NetworkTeacher::calcAveregeError()
 {
 	double TotalErrorPerCycle = 0;
 	std::vector<double> res;
-	MyNetwork network_copy = *net;
+	MyNetwork network_copy = net->clone();
 	for (unsigned int i = 0; i < dataset.size(); i++)
 	{
 		res = network_copy.run(dataset[i].data);
@@ -74,7 +74,7 @@ double NetworkTeacher::calcTotalError()
 			TotalErrorPerCycle += oError(res[j] - dataset[i].answer[j]);
 		}
 	}
-	return TotalErrorPerCycle;
+	return TotalErrorPerCycle / dataset.size();
 }
 
 // [min; max]
@@ -96,7 +96,7 @@ void NetworkTeacher::selectRandomDataUnit()
 
 double NetworkTeacher::oError(double e)
 {
-	return e * e / 2;
+	return std::abs(e);
 }
 
 // Getters // Setters //
@@ -105,5 +105,5 @@ void NetworkTeacher::setLearnSpeed(double value) { learnSpeed = value; }
 double NetworkTeacher::getLearnSpeed() { return learnSpeed; }
 void NetworkTeacher::assign(MyNetwork &network) { net = &network; }
 void NetworkTeacher::setDataset(Dataset dataset_) { dataset = dataset_; }
-double NetworkTeacher::getTotalError() { return calcTotalError(); }
+double NetworkTeacher::getTotalError() { return calcAveregeError(); }
 DataUnit NetworkTeacher::getCurrentDataUnit() { return *selectedDataUnit; }

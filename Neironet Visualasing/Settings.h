@@ -24,10 +24,26 @@ class Settings
         sf::Color clearColor = sf::Color(30, 30, 31);
     };
     MainWindowRendererSettings mainWindowRendererSettings;
-    std::vector<unsigned int> netLayers = {1, 1, 1};
+    std::vector<unsigned int> netLayers = {4, 4, 3, 2, 1};
     double startLearningSpeed = 0.0001;
-    Dataset dataset{{
-        DataUnit({1},{1}),
-        DataUnit({0},{0}),
+    Dataset learnDataset{{
+        DataUnit({1, 1, 1, 0}, {0}),
+        DataUnit({1, 1, 0, 0}, {0}),
+        DataUnit({1, 0, 1, 1}, {1}),
+        DataUnit({1, 0, 0, 1}, {1}),
+        DataUnit({1, 0, 0, 0}, {1}),
+        DataUnit({0, 1, 1, 0}, {1}),
+        DataUnit({0, 1, 0, 1}, {1}),
+        DataUnit({0, 1, 0, 0}, {1}),
+        DataUnit({0, 0, 0, 0}, {0}),
+    }};
+    Dataset testingDataset{{
+        DataUnit({1, 1, 1, 1}, {0}),
+        DataUnit({1, 1, 0, 1}, {0}),
+        DataUnit({1, 0, 1, 0}, {1}),
+        DataUnit({0, 1, 1, 1}, {1}),
+        DataUnit({0, 0, 1, 1}, {0}),
+        DataUnit({0, 0, 1, 0}, {0}),
+        DataUnit({0, 0, 0, 1}, {0}),
     }};
 };
